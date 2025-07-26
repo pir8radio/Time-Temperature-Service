@@ -1,7 +1,7 @@
 #!/bin/bash
 # https://github.com/pir8radio/Time-Temperature-Service
 
-# -- EDIT THE LAT AND LON BELOW FOR THE AREA YOU WANT TO GET A TEMPERATURE VALUE FOR (lines 6 & 7) --
+# -- EDIT THE LAT AND LON BELOW FOR THE AREA YOU WANT TO GET A TEMPERATURE VALUE FOR (lines 8 & 9) --
 # --- Paths ---
 CACHE_FILE="/var/lib/asterisk/last_known_temp"
 LOG_FILE="/var/lib/asterisk/temp_script.log"
