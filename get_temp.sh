@@ -17,7 +17,7 @@ chmod 666 "$CACHE_FILE" "$LOG_FILE"
 RAW_TEMP=$(curl -s "$WEATHER_URL" | jq '.current.temperature_2m')
 
 # --- Log raw result ---
-echo "$(date '+%Y-%m-%d %H:%M:%S') - Raw temp: $RAW_TEMP" >> "$LOG_FILE"
+# echo "$(date '+%Y-%m-%d %H:%M:%S') - Raw temp: $RAW_TEMP" >> "$LOG_FILE"
 
 # --- Validate: numeric and within expected range ---
 if [[ "$RAW_TEMP" =~ ^-?[0-9]+(\.[0-9]+)?$ ]]; then
