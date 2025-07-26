@@ -108,11 +108,12 @@ From your local system, upload the script to the server either by drag and drop 
 scp get_temp.sh youruser@yourserver:/usr/local/bin/
 ```
 
-Then from the FreePBX terminal, make it executable:
+Then from the FreePBX terminal, make it executable and install the required packages for weather parsing:
 
 ```bash
 chmod +x /usr/local/bin/get_temp.sh
 chown asterisk:asterisk /usr/local/bin/get_temp.sh
+yum install -y bash curl jq
 ```
 
 Test it:
