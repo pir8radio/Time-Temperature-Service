@@ -151,7 +151,8 @@ Test it:
    - Open `/etc/asterisk/extensions_custom.conf`
    - Add the dialplan provided in this github, copy/paste and don't forget to update it for your inbound DID
 
-5. **Route all calls from specific SIP trunks to the Time & Temp script** (only if you are using FreePBX just for the Time & Temp Service)
+5. **Route all calls from specific SIP trunks to the Time & Temp script**
+> Do it this way only if you are using a whole set of trunks exclusively for the Time & Temp Service
    - In the GUI, go to **Connectivity > Trunks**
    - Set your trunks you wish to dedicate for Time & Temp, context to `from-trunk-time-temp`
 
