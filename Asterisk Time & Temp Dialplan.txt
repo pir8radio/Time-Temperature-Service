@@ -1,0 +1,97 @@
+; You must edit this line below "exten => <YOUR DID HERE>,1,Goto(*987,1)  ; REMOVE <> ADD YOUR DID HERE FOR INBOUND CALLS TO THE TIME & TEMP"
+
+[from-internal-custom]
+
+; ---- Playback whole numbers with custom audio ----
+exten => custom-play-number,1,NoOp(Playing ${ARG1})
+ same => n,GotoIf($["${ARG1}" = ""]?failnum,1)                   ; Skip empty input
+ same => n,GotoIf($["${ARG1}" != "${FILTER(0-9-,${ARG1})}"]?failnum,1) ; Reject non-numeric or malformed input
+ same => n,Set(NUM=${FILTER(0-9,${ARG1})})                       ; Strip out any non-digit characters
+ same => n,GotoIf($[${NUM} < 10]?simple,1)                       ; Play digits individually (e.g. "5")
+ same => n,GotoIf($[${NUM} >= 10 & ${NUM} <= 19]?teen,1)         ; Handle teen numbers (e.g. "17")
+ same => n,GotoIf($[${NUM} < 100]?compound,1)                    ; Handle numbers <100 (e.g. "45")
+ same => n,Set(H=$[${NUM} / 100])                                ; Extract hundreds digit
+ same => n,Set(R=$[${NUM} % 100])                                ; Get remainder for recursive playback
+ same => n,Playback(custom/${H}00)                               ; Play "300", "400", etc. from custom file
+ same => n,GoSub(custom-play-number,1(${R}))                     ; Recursively play remainder
+ same => n,Return()
+
+; ---- Play single digits individually ----
+exten => simple,1,Set(LEN=${LEN(${NUM})})
+ same => n,Set(I=0)
+ same => n(loop),Set(D=${NUM:${I}:1})                            ; Slice out each digit
+ same => n,ExecIf($["${D}" != ""]?Playback(custom/${D}))         ; Play each digit from custom file
+ same => n,Set(I=$[${I} + 1])
+ same => n,GotoIf($[${I} < ${LEN}]?loop)
+ same => n,Return()
+
+; ---- Play teens directly from custom audio (10–19) ----
+exten => teen,1,Playback(custom/${NUM})
+ same => n,Return()
+
+; ---- Handle two-digit compound numbers like 24, 67, etc. ----
+exten => compound,1,NoOp(Compound logic for ${NUM})
+ same => n,Set(T=${NUM:0:1}0)                                    ; Tens digit (e.g. "2" → "20")
+ same => n,Set(U=${NUM:1:1})                                     ; Units digit (e.g. "4")
+ same => n,Playback(custom/${T})
+ same => n,ExecIf($["${U}" != "0"]?Playback(custom/${U}))
+ same => n,Return()
+
+; ---- Playback error for invalid input ----
+exten => failnum,1,Playback(custom/error)
+ same => n,Return()
+
+; ---- Alias: redirect inbound call from a known DID ----
+exten => <YOUR DID HERE>,1,Goto(*987,1)                          ; REMOVE <> ADD YOUR DID HERE FOR INBOUND CALLS TO THE TIME & TEMP
+
+; ---- Main IVR extension: plays time and temperature ----
+exten => *987,1,Ringing()                                        ; Send ringback to caller
+ same => n,Wait(3)                                               ; Delay ~1 ring before answering
+ same => n,Answer()
+ same => n,Set(HOUR=${STRFTIME(${EPOCH},,%H)})                   ; Get current hour (24hr format)
+ same => n,ExecIf($[${HOUR} < 12]?Playback(custom/good-morning)) ; Time-based greeting
+ same => n,ExecIf($[${HOUR} >= 12 & ${HOUR} < 17]?Playback(custom/good-afternoon))
+ same => n,ExecIf($[${HOUR} >= 17]?Playback(custom/good-evening))
+
+ same => n,Playback(custom/today-is)
+ same => n,Set(DAY=${STRFTIME(${EPOCH},,%A)})                    ; Day of week
+ same => n,Set(MONTH=${STRFTIME(${EPOCH},,%B)})                  ; Month name
+ same => n,Set(DATE=${STRFTIME(${EPOCH},,%d)})                   ; Numeric day
+ same => n,ExecIf($["${DAY}" != ""]?Playback(custom/${DAY}))
+ same => n,ExecIf($["${MONTH}" != ""]?Playback(custom/${MONTH}))
+ same => n,GoSub(custom-play-number,1(${DATE}))                  ; Play date using digit logic
+
+ same => n,Playback(custom/the-time-is)
+ same => n,Set(H=${FILTER(0-9,${STRFTIME(${EPOCH},,%l)})})       ; Hour (12hr format, no leading 0)
+ same => n,Set(M=${STRFTIME(${EPOCH},,%M)})                      ; Minutes
+ same => n,Set(P=${STRFTIME(${EPOCH},,%p)})                      ; AM/PM indicator
+ same => n,GoSub(custom-play-number,1(${H}))                     ; Play hour
+ same => n,ExecIf($["${M}" = "00"]?Playback(custom/o-clock):GoSub(custom-play-number,1(${M}))) ; Handle "o'clock"
+ same => n,ExecIf($["${P}" = "AM"]?Playback(custom/a-m))         ; AM/PM playback
+ same => n,ExecIf($["${P}" = "PM"]?Playback(custom/p-m))
+
+ same => n,Set(TEMP=${SHELL(/usr/local/bin/get_temp.sh)})        ; Get current temp via shell
+ same => n,GotoIf($["${TEMP}" = ""]?failtemp,1)                  ; Fallback on shell error
+ same => n,Playback(custom/the-current-temperature-is)
+ same => n,GotoIf($["${TEMP:0:1}" = "-"]?minus,1)                ; Handle negative temp
+ same => n,GoSub(custom-play-number,1(${TEMP}))
+ same => n,Playback(custom/degrees)
+ same => n,Wait(1)
+ same => n,Hangup()
+
+; ---- Play negative temperature with "minus" prefix ----
+exten => minus,1,Playback(custom/minus)
+ same => n,Set(POS=${TEMP:1})                                    ; Remove leading "-"
+ same => n,GoSub(custom-play-number,1(${POS}))
+ same => n,Playback(custom/degrees)
+ same => n,Wait(1)
+ same => n,Hangup()
+
+; ---- Fallback for temperature fetch failure ----
+exten => failtemp,1,Playback(custom/temperature-error)
+ same => n,Wait(1)
+ same => n,Hangup()
+
+[from-trunk-time-temp]
+; ---- Route external trunk calls directly to *987 ----
+exten => _X.,1,Goto(from-internal-custom,*987,1)
