@@ -1,4 +1,5 @@
 # 📞→⌚🌡️ Time & Temperature Announcer for FreePBX
+Try it out!  Call: 1-219-933-9000 (NWI Time & Temperature line)
 
 This FreePBX dialplan module plays dynamic time, date, and weather temperature to callers using custom audio files. It supports personalized greetings, robust number parsing, and seamless temperature integration via a shell script that fetches live data.
 
