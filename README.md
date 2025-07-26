@@ -185,7 +185,7 @@ ln -s /var/lib/asterisk/temp_script.log /var/log/asterisk/temp_script.log
 ```
 
 ## 🆘 HELP!
-This was a fun project of mine, I don't have much time to assist with issues, but i'll do my best if you need a hand, use the Discussions tab at the top of this page to ask for some help.
+This was a fun project of mine, I don't have much time to assist with issues, but i'll do my best if you need a hand, use the Discussions tab at the top of this page to ask for some help or [Click here](https://github.com/pir8radio/Time-Temperature-Service/discussions/categories/q-a).
 
 ## ⚖️ License
 
