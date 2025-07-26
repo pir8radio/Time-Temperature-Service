@@ -131,13 +131,15 @@ Test it:
 2. **Navigate to Custom Destinations**
    - Go to **Admin > Custom Destinations**
    - Click **Add Custom Destination**
-
+   
 3. **Define the Dialplan Context**
-   - Set **Custom Destination** to your desired logic, for example:  
-     `temp-check,s,1`
-   - Give it a recognizable **Description** (e.g. `Temperature Playback`)
+   - Set **Custom Destination** to your desired logic:  
+     `from-internal-custom,*987,1`
+   - Give it a recognizable **Description** (e.g. `Time&Temp`)
    - Click **Submit** and **Apply Config**
 
+  <img width="1678" height="524" alt="image" src="https://github.com/user-attachments/assets/a8a7020a-2341-4cb1-bf03-0a323f760bfa" />
+  
 4. **Add Logic to extensions_custom.conf**
    - In the GUI, go to **Admin > Config Edit** (or use **System Admin > File Editor** if available)
    - Open `/etc/asterisk/extensions_custom.conf`
@@ -150,19 +152,6 @@ Test it:
        ```
        dialplan reload
        ```
-
-#### 5️⃣ Create Feature Code in GUI
-
-Open the FreePBX Admin Web Interface:
-
-- Go to **Admin → Custom Destinations**
-  - Add: `from-internal-custom,*987,1`
-- Go to **Admin → Misc Applications**
-  - Name: “Time & Temp”
-  - Feature Code: `*987`
-  - Destination: your custom context
-
-You can now dial `*987` from any extension to hear the playback if this is part of a full PBX system, otherwise if stand alone Time & Temp, ignore this.
 
 ## 🔍 Monitoring & Logs
 
