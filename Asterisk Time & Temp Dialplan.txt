@@ -1,6 +1,6 @@
 ; https://github.com/pir8radio/Time-Temperature-Service
 
-; You must find and edit this line (#45) below "exten => <YOUR DID HERE>,1,Goto(*987,1)  ; REMOVE <> ADD YOUR DID HERE FOR INBOUND CALLS TO THE TIME & TEMP"
+; You must find and edit this line (#47) below "exten => <YOUR DID HERE>,1,Goto(*987,1)  ; REMOVE <> ADD YOUR DID HERE FOR INBOUND CALLS TO THE TIME & TEMP"
 
 [from-internal-custom]
 
