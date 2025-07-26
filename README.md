@@ -179,6 +179,8 @@ To monitor the temperature script:
 ```bash
 tail -f /var/lib/asterisk/temp_script.log
 ```
+You can also run this to add the temp_script.log to your asterisk log directory so you can view it from the FreePBX menu **Reports > System Logfiles**
+```ln -s /var/lib/asterisk/temp_script.log /var/log/asterisk/temp_script.log```
 
 ## ⚖️ License
 
