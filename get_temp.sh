@@ -24,7 +24,8 @@ if [[ "$RAW_TEMP" =~ ^-?[0-9]+(\.[0-9]+)?$ ]]; then
     # Round to nearest integer, preserving sign
     TEMP=$(printf "%.0f" "$RAW_TEMP")
     if [[ "$TEMP" -ge -80 && "$TEMP" -le 130 ]]; then
-        echo "$(date '+%Y-%m-%d %H:%M:%S') - Valid rounded temp: $TEMP" >> "$LOG_FILE"
+        # echo "$(date '+%Y-%m-%d %H:%M:%S') - Valid rounded temp: $TEMP" >> "$LOG_FILE"
+        :
     else
         echo "$(date '+%Y-%m-%d %H:%M:%S') - Out-of-range value. Using fallback." >> "$LOG_FILE"
         TEMP=""
