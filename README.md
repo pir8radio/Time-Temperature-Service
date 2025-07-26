@@ -80,6 +80,8 @@ These instructions walk you through installing and configuring the Time & Temper
 
 ### ⚙️ Step-by-Step Installation
 
+This assumes you have installed FreePBX and setup your SIP trunks, (google for that or get free config samples from your sip provider)
+
 #### 1️⃣ Upload Custom Audio Files via SCP
 
 From your local machine or audio workstation, use `scp` to copy your `.wav` or `.slin` files to the server:
@@ -143,7 +145,7 @@ Test it:
 4. **Add Logic to extensions_custom.conf**
    - In the GUI, go to **Admin > Config Edit** (or use **System Admin > File Editor** if available)
    - Open `/etc/asterisk/extensions_custom.conf`
-   - Add the dialplan provided in this github, copy/paste and update for your inbound DID
+   - Add the dialplan provided in this github, copy/paste and don't forget to update it for your inbound DID
 
 5. **Reload Dialplan**
    - Hit **Apply Config** or
