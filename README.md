@@ -144,14 +144,21 @@ Test it:
    - Give it a recognizable **Description** (e.g. `Time&Temp`)
    - Click **Submit** and **Apply Config**
 
-  <img width="1678" height="524" alt="image" src="https://github.com/user-attachments/assets/a8a7020a-2341-4cb1-bf03-0a323f760bfa" />
+     <img width="1678" height="524" alt="image" src="https://github.com/user-attachments/assets/a8a7020a-2341-4cb1-bf03-0a323f760bfa" />
   
 4. **Add Logic to extensions_custom.conf**
    - In the GUI, go to **Admin > Config Edit** (or use **System Admin > File Editor** if available)
    - Open `/etc/asterisk/extensions_custom.conf`
    - Add the dialplan provided in this github, copy/paste and don't forget to update it for your inbound DID
 
-5. **Reload Dialplan**
+5. **Route all calls from specific SIP trunks to the Time & Temp script directly** (only if you are using FreePBX just for the Time & Temp Service)
+   - In the GUI, go to **Connectivity > Trunks**
+   - Set your trunks you wish to dedicate for Time & Temp, context to `from-internal-custom`
+
+     <img width="1669" height="806" alt="image" src="https://github.com/user-attachments/assets/c8edbc6f-cf2c-4d97-8a07-3b42f248de08" />
+
+     
+6. **Reload Dialplan**
    - Hit **Apply Config** or
      - Navigate to **Admin > Asterisk CLI**
      - Run the command:
