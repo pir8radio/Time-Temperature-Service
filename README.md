@@ -89,6 +89,8 @@ Either drag and drop to `/var/lib/asterisk/sounds/custom/` using the windows ver
 ```bash
 scp /local/path/to/audio/*.slin youruser@yourserver:/var/lib/asterisk/sounds/custom/
 ```
+Make sure the files are all located in the custom/ directory, don't and not in a sub directory.
+<img width="539" height="194" alt="image" src="https://github.com/user-attachments/assets/64d157b9-ab6b-412c-80e4-bafab817e291" />
 
 After uploading, from the command prompt on the FreePBX server, set ownership:
 
