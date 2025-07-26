@@ -153,7 +153,7 @@ Test it:
 
 5. **Route all calls from specific SIP trunks to the Time & Temp script** (only if you are using FreePBX just for the Time & Temp Service)
    - In the GUI, go to **Connectivity > Trunks**
-   - Set your trunks you wish to dedicate for Time & Temp, context to `from-trun-time-temp`
+   - Set your trunks you wish to dedicate for Time & Temp, context to `from-trunk-time-temp`
 
      <img width="1651" height="788" alt="image" src="https://github.com/user-attachments/assets/6ee1dc89-95d0-4727-bb2f-272fe38a0cf2" />
 
