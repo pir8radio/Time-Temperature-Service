@@ -54,7 +54,7 @@ exten => *987,1,Ringing()                                        ; Send ringback
  same => n,ExecIf($[${HOUR} < 12]?Playback(custom/good-morning)) ; Time-based greeting
  same => n,ExecIf($[${HOUR} >= 12 & ${HOUR} < 17]?Playback(custom/good-afternoon))
  same => n,ExecIf($[${HOUR} >= 17]?Playback(custom/good-evening))
-
+ 
  same => n,Playback(custom/today-is)
  same => n,Set(DAY=${STRFTIME(${EPOCH},,%A)})                    ; Day of week
  same => n,Set(MONTH=${STRFTIME(${EPOCH},,%B)})                  ; Month name
@@ -72,12 +72,21 @@ exten => *987,1,Ringing()                                        ; Send ringback
  same => n,ExecIf($["${P}" = "AM"]?Playback(custom/a-m))         ; AM/PM playback
  same => n,ExecIf($["${P}" = "PM"]?Playback(custom/p-m))
 
- same => n,Set(TEMP=${SHELL(/usr/local/bin/get_temp.sh)})        ; Get current temp via shell
- same => n,GotoIf($["${TEMP}" = ""]?failtemp,1)                  ; Fallback on shell error
+ same => n,Set(TLINE=${SHELL(/usr/local/bin/get_temp.sh)})       ; Get both temp values
+ same => n,GotoIf($["${TLINE}" = ""]?failtemp,1)                 ; Fallback on shell error
+ same => n,Set(TEMP=${CUT(TLINE,|,1)})                           ; Extract actual temp
+ same => n,Set(FEELS=${CUT(TLINE,|,2)})                          ; Extract apparent temp
+
  same => n,Playback(custom/the-current-temperature-is)
  same => n,GotoIf($["${TEMP:0:1}" = "-"]?minus,1)                ; Handle negative temp
  same => n,GoSub(custom-play-number,1(${TEMP}))
- same => n,Playback(custom/degrees)
+ same => n(tempminusdone),Playback(custom/degrees)
+
+ ;same => n,Playback(custom/but-it-feels-like)                    ; Feels-like playback
+ ;same => n,GotoIf($["${FEELS:0:1}" = "-"]?feelsminus,1)
+ ;same => n,GoSub(custom-play-number,1(${FEELS}))
+ ;same => n(feelsminusdone),Playback(custom/degrees)
+
  same => n,Wait(1)
  same => n,Hangup()
 
@@ -85,9 +94,13 @@ exten => *987,1,Ringing()                                        ; Send ringback
 exten => minus,1,Playback(custom/minus)
  same => n,Set(POS=${TEMP:1})                                    ; Remove leading "-"
  same => n,GoSub(custom-play-number,1(${POS}))
- same => n,Playback(custom/degrees)
- same => n,Wait(1)
- same => n,Hangup()
+ same => n,Goto(s,tempminusdone)                                 ; Jump back to degrees playback & continue
+
+; ---- Play negative feels-like value ----
+exten => feelsminus,1,Playback(custom/minus)
+ same => n,Set(FPOS=${FEELS:1})                                  ; Remove leading "-"
+ same => n,GoSub(custom-play-number,1(${FPOS}))
+ same => n,Goto(s,feelsminusdone)                                ; Jump back to degrees playback & continue
 
 ; ---- Fallback for temperature fetch failure ----
 exten => failtemp,1,Playback(custom/temperature-error)
