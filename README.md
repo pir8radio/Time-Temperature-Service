@@ -8,6 +8,7 @@ This FreePBX dialplan module plays dynamic time, date, and weather temperature t
 - Accurate playback of current time and date
 - Personalized "Good morning / afternoon / evening" greetings
 - Temperature fetched from Open-Meteo API and played as whole number
+- If actual temperature is different from the "feels like" temperature, play "but it feels like X degrees"
 - Support for negative temperatures (e.g. “minus 5 degrees”)
 - Modular number pronunciation using `custom-play-number`
 - Graceful fallback logic and caching if temperature is unavailable
