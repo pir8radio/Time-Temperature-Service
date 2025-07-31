@@ -9,8 +9,20 @@ LAT="41.878"    # Latitude for weather lookup
 LON="-87.629"   # Longitude for weather lookup
 WEATHER_URL="https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}&current=temperature_2m&temperature_unit=fahrenheit"
 
-# --- Ensure cache and log files exist ---
-touch "$CACHE_FILE" "$LOG_FILE"
+# --- Use cached temp if less than 10 minutes old keeps api calls to weather service lower ---
+if [[ -f "$CACHE_FILE" ]]; then
+    CACHE_AGE=$(( $(date +%s) - $(stat -c %Y "$CACHE_FILE") ))
+    if [[ "$CACHE_AGE" -lt 600 ]]; then
+        TEMP=$(< "$CACHE_FILE")
+        # echo "$(date '+%Y-%m-%d %H:%M:%S') - Using cached temp: $TEMP" >> "$LOG_FILE"
+        echo "$TEMP" | tr -d '\n'
+        exit 0
+    fi
+fi
+
+# --- Ensure files exist without updating timestamps ---
+[[ -f "$CACHE_FILE" ]] || echo "0" > "$CACHE_FILE"
+[[ -f "$LOG_FILE" ]] || touch "$LOG_FILE"
 chmod 666 "$CACHE_FILE" "$LOG_FILE"
 
 # --- Fetch current temperature in Fahrenheit ---
@@ -24,7 +36,7 @@ if [[ "$RAW_TEMP" =~ ^-?[0-9]+(\.[0-9]+)?$ ]]; then
     # Round to nearest integer, preserving sign
     TEMP=$(printf "%.0f" "$RAW_TEMP")
     if [[ "$TEMP" -ge -80 && "$TEMP" -le 130 ]]; then
-        # echo "$(date '+%Y-%m-%d %H:%M:%S') - Valid rounded temp: $TEMP" >> "$LOG_FILE"
+        # echo "$(date '+%Y-%m-%d %H:%M:%S') - Using valid rounded API temp: $TEMP" >> "$LOG_FILE"
         :
     else
         echo "$(date '+%Y-%m-%d %H:%M:%S') - Out-of-range value. Using fallback." >> "$LOG_FILE"
