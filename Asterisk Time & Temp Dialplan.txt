@@ -76,7 +76,7 @@ exten => *987,1,Ringing()                                        ; Send ringback
  same => n,GotoIf($["${TLINE}" = ""]?failtemp,1)                 ; Fallback on shell error
  same => n,Set(TEMP=${CUT(TLINE,|,1)})                           ; Extract actual temp
  same => n,Set(FEELS=${CUT(TLINE,|,2)})                          ; Extract apparent temp
- same => n,Set(CDR(userfield)=${TEMP}°F-${FEELS}°F)              ; Writes temps to CDR for easy troubleshooting
+ same => n,Set(CDR(userfield)=${TEMP}°F & ${FEELS}°F)            ; Writes temps to CDR for easy troubleshooting
  
  same => n,Playback(custom/the-current-temperature-is)           ; Current temp playback
  same => n,GotoIf($["${TEMP:0:1}" = "-"]?minus,1)                ; Handle negative temp
