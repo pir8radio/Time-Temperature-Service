@@ -77,17 +77,19 @@ exten => *987,1,Ringing()                                        ; Send ringback
  same => n,Set(TEMP=${CUT(TLINE,|,1)})                           ; Extract actual temp
  same => n,Set(FEELS=${CUT(TLINE,|,2)})                          ; Extract apparent temp
 
- same => n,Playback(custom/the-current-temperature-is)
+ same => n,Playback(custom/the-current-temperature-is)           ; Current temp playback
  same => n,GotoIf($["${TEMP:0:1}" = "-"]?minus,1)                ; Handle negative temp
  same => n,GoSub(custom-play-number,1(${TEMP}))
  same => n(tempminusdone),Playback(custom/degrees)
+ 
+ same => n,GotoIf($["${TEMP}" = "${FEELS}"]?skipfeels)           ; Skip feels-like if temps are the same
 
- ;same => n,Playback(custom/but-it-feels-like)                    ; Feels-like playback
- ;same => n,GotoIf($["${FEELS:0:1}" = "-"]?feelsminus,1)
- ;same => n,GoSub(custom-play-number,1(${FEELS}))
- ;same => n(feelsminusdone),Playback(custom/degrees)
+ same => n,Playback(custom/but-it-feels-like)                    ; Feels-like playback
+ same => n,GotoIf($["${FEELS:0:1}" = "-"]?feelsminus,1)
+ same => n,GoSub(custom-play-number,1(${FEELS}))
+ same => n(feelsminusdone),Playback(custom/degrees)
 
- same => n,Wait(1)
+ same => n(skipfeels),Wait(1)
  same => n,Hangup()
 
 ; ---- Play negative temperature with "minus" prefix ----
