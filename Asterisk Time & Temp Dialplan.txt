@@ -83,7 +83,10 @@ exten => *987,1,Ringing()                                        ; Send ringback
  same => n,GoSub(custom-play-number,1(${TEMP}))
  same => n(tempminusdone),Playback(custom/degrees)
  
- same => n,GotoIf($["${TEMP}" = "${FEELS}"]?skipfeels)           ; Skip feels-like if temps are the same
+ ; ---- Skip feels-like if temps are not more than 5 degrees different ----
+ same => n,Set(DIFF=$[${TEMP} - ${FEELS}])
+ same => n,Set(DIFF=${IF($[${DIFF} < 0]?$[0 - ${DIFF}]:${DIFF})})
+ same => n,GotoIf($[${DIFF} < 5]?skipfeels)
 
  same => n,Playback(custom/but-it-feels-like)                    ; Feels-like playback
  same => n,GotoIf($["${FEELS:0:1}" = "-"]?feelsminus,1)
@@ -114,3 +117,4 @@ exten => failtemp,1,Playback(custom/temperature-error)
 [from-trunk-time-temp]
 ; ---- Route external trunk calls directly to *987 ----
 exten => _X.,1,Goto(from-internal-custom,*987,1)
+
