@@ -180,10 +180,19 @@ To monitor the temperature script:
 ```bash
 tail -f /var/lib/asterisk/temp_script.log
 ```
+
 You can also run this to add the temp_script.log to your asterisk log directory so you can view it from the FreePBX menu **Reports > System Logfiles**
 ```bash
 ln -s /var/lib/asterisk/temp_script.log /var/log/asterisk/temp_script.log
 ```
+The temp_script.log will show any issues with the script, as well as when the weather api didnt work and the fallback was used.
+
+<img width="403" height="254" alt="image" src="https://github.com/user-attachments/assets/7304667d-4e95-4874-8709-a523ffd4752c" />
+
+The CDR records will also show a Userfield that contains something like ```90°F & 96°F*``` This is handy to let you know your script is working and what it did.  For example this one means the actual temperature is 90°F, the "Feels Like" temperature is 96°F, and the ```*``` at the end means the difference between actual and feels like was greater than 3° so the caller heard "but it feels like 96°".  If that ```*``` was not there the actual and feels like were probably pretty close to each other like ```90°F & 91°F``` in this instance the caller would only have heard "the current temperature is 90°" then the call would have disconnected, leaving off the "but it feels like X°" or the user hung-up before the script got to that part (you can see and example of one of these in the below CDR). 
+
+<img width="1530" height="699" alt="image" src="https://github.com/user-attachments/assets/9864b111-a166-423b-9f2c-7811eafba462" />
+
 
 ## 🆘 HELP!
 This was a fun project of mine, I don't have much time to assist with issues, but i'll do my best if you need a hand, use the Discussions tab at the top of this page to ask for some help or [Click here](https://github.com/pir8radio/Time-Temperature-Service/discussions/categories/q-a).
